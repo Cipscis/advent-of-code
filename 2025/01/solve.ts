@@ -13,6 +13,8 @@ interface Instruction {
 interface Solution {
 	/** The solution to part 1. */
 	zeroStopCount: number;
+	/** The solution to part 2. */
+	zeroPassCount: number;
 }
 
 /**
@@ -65,7 +67,43 @@ function stoppedAtZero(position: number): boolean {
 }
 
 /**
- * Provide a solution to the first part of the problem.
+ * Determine how many times moving from one number to another passes zero.
+ *
+ * Starting on zero doesn't count, but ending on zero does.
+ *
+ * Used for solving part 2.
+ */
+function getZeroPassCount(start: number, end: number): number {
+	// We don't care about the ones or tens digits, only if we pass a threshold of 100
+	const startHundreds = Math.floor(start / 100);
+	const endHundreds = Math.floor(end / 100);
+
+	// If we didn't cross a threshold, just check if we ended on zero
+	if (startHundreds === endHundreds) {
+		return stoppedAtZero(end) ? 1 : 0;
+	}
+
+	// Otherwise, start by counting how many hundreds apart we are
+	let difference = Math.abs(startHundreds - endHundreds);
+
+	// If we went left, count boundaries we crossed differently
+	if (end < start) {
+		// If we started on zero it doesn't count
+		if (start % 100 === 0) {
+			difference -= 1;
+		}
+
+		// If we ended on zero, count that
+		if (end % 100 === 0 ) {
+			difference += 1;
+		}
+	}
+
+	return difference;
+}
+
+/**
+ * Provide solutions to both parts of the problem.
  */
 export function solve(rawInput: string): Solution {
 	const input = parseInput(rawInput);
@@ -73,6 +111,7 @@ export function solve(rawInput: string): Solution {
 	let position = 50;
 
 	let zeroStopCount = 0;
+	let zeroPassCount = 0;
 
 	for (const instruction of input) {
 		const prevPosition = position;
@@ -81,9 +120,12 @@ export function solve(rawInput: string): Solution {
 		if (stoppedAtZero(position)) {
 			zeroStopCount += 1;
 		}
+
+		zeroPassCount += getZeroPassCount(prevPosition, position);
 	}
 
 	return {
 		zeroStopCount,
+		zeroPassCount,
 	};
 }
