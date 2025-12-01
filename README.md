@@ -8,6 +8,7 @@ The repo is divided into folders for each year, then folders for each puzzle. Fo
 
 Each puzzle contains the same set of files:
 
+- `README.ts` a brief write-up of the thought process behind my solutions
 - `solve.ts` contains all the code needed to solve a puzzle, given an input
 - `test-input.txt` contains the test input provided within a puzzle, used to help validate a solution while it's in progress
 - `test.ts` runs the solution against the test input, outputting the solution to the console
