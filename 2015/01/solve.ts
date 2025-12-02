@@ -5,6 +5,7 @@
 
 interface Solution {
 	finalFloor: number;
+	firstBasementIndex: number | null;
 }
 
 /**
@@ -12,18 +13,27 @@ interface Solution {
  */
 export function solve(rawInput: string): Solution {
 	let floor = 0;
+	let firstBasementIndex: number | null = null;
 
-	for (const char of rawInput) {
+	rawInput.split('').forEach((char, index) => {
 		if (char === '(') {
 			floor += 1;
 		} else if (char === ')') {
 			floor -= 1;
+
+			if (firstBasementIndex === null) {
+				if (floor < 0) {
+					// Add 1 to convert from 0-based to 1-based
+					firstBasementIndex = index + 1;
+				}
+			}
 		} else {
 			throw new Error(`Unrecognised character '${char}'`);
 		}
-	}
+	});
 
 	return {
 		finalFloor: floor,
+		firstBasementIndex,
 	};
 }

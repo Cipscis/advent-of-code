@@ -10,6 +10,8 @@ For my input, the correct solution to part one was **280**.
 
 ## Part two
 
-TODO
+Part two is also simple. We need to find the (1-based) index of the first character that causes the counter to tick down to -1. Because I'm already looping over them, an extra condition can check this.
 
-For my input, the solution to part two was **TODO**.
+I just needed to make a slight adjustment to the way I was iterating over the array, because the `for...of` loop I had used initially doesn't include the character's index. Looping through an array using `forEach` does provide this extra information, and converting a string into an array of characters is easy enough using `String.prototype.split`.
+
+For my input, the solution to part two was **1797**.
