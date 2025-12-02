@@ -16,6 +16,6 @@ For my input, the correct solution to part one was **1,586,300**.
 
 ## Part two
 
-TODO
+The second part is just doing a couple more simple calculations. Volume is the product of the trio of numbers on each line, and the minimum perimeter is the smallest sum of any two of them, doubled. I saved the doubling until after I found the minimum since it doesn't affect the comparison.
 
-For my input, the solution to part two was **TODO**.
+For my input, the solution to part two was **3,737,498**.
