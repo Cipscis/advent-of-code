@@ -10,10 +10,8 @@ Each puzzle contains the same set of files:
 
 - `README.ts` a brief write-up of the thought process behind my solutions
 - `solve.ts` contains all the code needed to solve a puzzle, given an input
-- `test-input.txt` contains the test input provided within a puzzle, used to help validate a solution while it's in progress
-- `test.ts` runs the solution against the test input, outputting the solution to the console
-- `input.txt` contains the user-specific input the Advent of Code website provided to Brooke
-- `index.ts` runs the solution against Brooke's input, outputting the solution to the console
+- `test.ts` runs the solution against a `test-input.txt` file, outputting the solution to the console
+- `index.ts` runs the solution against an `input.txt` file, outputting the solution to the console
 
 The two executable files, `test.ts` and `index.ts`, can be run directly from within each puzzle folder using Node on the command line:
 
@@ -24,6 +22,10 @@ node test.ts
 ```cmd
 node index.ts
 ```
+
+You might notice that the text files these scripts consume are missing. Unfortunately this is part of doing Advent of Code. The content of the puzzles, and their inputs, are [free to use but not free to copy](https://adventofcode.com/about#faq_copying).
+
+If you want to test one of my solutions, feel free to get some input directly from the Advent of Code website to run them against.
 
 ## Supporting structure
 
