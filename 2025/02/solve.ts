@@ -3,7 +3,9 @@
  *
  * Functions in this file refer to "invalid IDs".
  *
- * For the purpose of this puzzle, a number is an invalid ID if it consists entirely of a string of digits repeated twice or more.
+ * For the purpose of part one of this puzzle, a number is an invalid ID if it consists entirely of a string of digits repeated twice.
+ *
+ * For part two, invalid IDs are numbers that consist entirely of a string of digits repeated twice **or more**.
  *
  * For example, `11` `12_341_234`, or `121_212`.
  *
@@ -11,7 +13,10 @@
  */
 
 interface Solution {
-	sum: number;
+	/** Solution to part one. */
+	sumOne: number;
+	/** Solution to part two. */
+	sumTwo: number;
 }
 
 type Range = [start: number, end: number];
@@ -41,11 +46,21 @@ function parseInput(input: string): Range[] {
 }
 
 /**
- * Find all "invalid ID" numbers within a range.
+ * Find all "invalid ID" numbers within a range, according to part one rules.
  */
-function getInvalidIds(range: Range): number[] {
+function getInvalidIdsOne(range: Range): number[] {
 	const intRange = getIntRange(range[0], range[1]);
-	const invalidIds = intRange.filter(isInvalidId);
+	const invalidIds = intRange.filter(isInvalidIdOne);
+
+	return invalidIds;
+}
+
+/**
+ * Find all "invalid ID" numbers within a range, according to part two rules.
+ */
+function getInvalidIdsTwo(range: Range): number[] {
+	const intRange = getIntRange(range[0], range[1]);
+	const invalidIds = intRange.filter(isInvalidIdTwo);
 
 	return invalidIds;
 }
@@ -75,9 +90,35 @@ function getIntRange(start: number, end: number): number[] {
 }
 
 /**
- * Checks if a number counts as an invalid ID.
+ * Checks if a number counts as an invalid ID, according to part one rules.
  */
-function isInvalidId(number: number): boolean {
+function isInvalidIdOne(number: number): boolean {
+	const strNum = String(number);
+	const length = strNum.length;
+
+	const numDigits = length / 2;
+
+	if (length % numDigits !== 0) {
+		// Skip substring lengths that couldn't repeat to make the whole number
+		return false;
+	}
+
+	const subStr = strNum.slice(0, numDigits);
+	const fitTimes = length / numDigits;
+	// Repeat the string the appropriate number of times to match the number's length
+	const compareStr = new Array(fitTimes).fill(subStr).join('');
+
+	if (compareStr === strNum) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Checks if a number counts as an invalid ID, according to part two rules.
+ */
+function isInvalidIdTwo(number: number): boolean {
 	const strNum = String(number);
 	const length = strNum.length;
 
@@ -115,17 +156,23 @@ function getSum(...array: number[]): number {
  * Provide a solution to part one of the puzzle.
  */
 export function solve(rawInput: string): Solution {
-	let sum = 0;
+	let sumOne = 0;
+	let sumTwo = 0;
 
 	const ranges = parseInput(rawInput);
 
 	for (const range of ranges) {
-		const invalidIdsInRange = getInvalidIds(range);
-		const invalidIdSum = getSum(...invalidIdsInRange);
-		sum += invalidIdSum;
+		const invalidIdsOneInRange = getInvalidIdsOne(range);
+		const invalidIdOneSum = getSum(...invalidIdsOneInRange);
+		sumOne += invalidIdOneSum;
+
+		const invalidIdsTwoInRange = getInvalidIdsTwo(range);
+		const invalidIdTwoSum = getSum(...invalidIdsTwoInRange);
+		sumTwo += invalidIdTwoSum;
 	}
 
 	return {
-		sum,
+		sumOne,
+		sumTwo,
 	};
 }

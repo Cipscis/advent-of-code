@@ -28,4 +28,6 @@ Okay, yeah. That was much faster to write. Closer to 10 minutes than an hour for
 
 If the input were orders of magnitude larger then perhaps performance enhancements of the sort I tried before might be worth it. But that optimisation was difficult to scale, and the input is _not_ orders of magnitude larger.
 
+Because I'd ripped out a bunch of unnecessary part one code for this part, I went back and added some simpler code so I'd still be calculating the solution to part one.
+
 For my input, the solution to part two was **46,666,175,279**.
