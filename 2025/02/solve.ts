@@ -3,9 +3,9 @@
  *
  * Functions in this file refer to "invalid IDs".
  *
- * For the purpose of this puzzle, a number is an invalid ID if it consists entirely of a string of digits repeated twice.
+ * For the purpose of this puzzle, a number is an invalid ID if it consists entirely of a string of digits repeated twice or more.
  *
- * For example, `11` or `12_341_234`.
+ * For example, `11` `12_341_234`, or `121_212`.
  *
  * @see {@link https://adventofcode.com/2025/day/1 Day 01 - Advent of Code 2025}
  */
@@ -44,24 +44,8 @@ function parseInput(input: string): Range[] {
  * Find all "invalid ID" numbers within a range.
  */
 function getInvalidIds(range: Range): number[] {
-	// Start by finding the first and last invalid IDs in a range
-	const startDoubled = getNextInvalidId(range[0]);
-	if (startDoubled > range[1]) {
-		return [];
-	}
-	const endDoubled = getPreviousInvalidId(range[1]);
-	if (endDoubled < range[0]) {
-		return [];
-	}
-
-	// Cut those first and last invalid IDs in half
-	const start = getFirstHalfDigits(startDoubled);
-	const end = getFirstHalfDigits(endDoubled);
-
-	// Turn that into an array of integers
-	const intRange = getIntRange(start, end);
-	// Turn every integer in that range into an invalid ID
-	const invalidIds = intRange.map(doubleDigits);
+	const intRange = getIntRange(range[0], range[1]);
+	const invalidIds = intRange.filter(isInvalidId);
 
 	return invalidIds;
 }
@@ -91,83 +75,29 @@ function getIntRange(start: number, end: number): number[] {
 }
 
 /**
- * For a given integer with an even number of digits, return the first half.
+ * Checks if a number counts as an invalid ID.
  */
-function getFirstHalfDigits(number: number): number {
-	if (!Number.isInteger(number)) {
-		throw new Error(`Encountered non-integer ${number}`);
-	}
-
+function isInvalidId(number: number): boolean {
 	const strNum = String(number);
 	const length = strNum.length;
 
-	if (length % 2 === 1) {
-		throw new Error(`Encountered number with odd number of digits ${number}`);
-	}
-
-	const firstHalf = strNum.slice(0, length / 2);
-
-	return Number(firstHalf);
-}
-
-/**
- * Convert a number into another number that consists of its digits doubled.
- *
- * For example, `23` becomes `2323`.
- */
-function doubleDigits(number: number): number {
-	const strNum = String(number);
-	return Number(`${strNum}${strNum}`);
-}
-
-/**
- * For a given number, find the next number that counts as an "invalid ID".
- *
- * If the specified number is itself invalid, return it.
- */
-function getNextInvalidId(number: number): number {
-	const firstHalf = (() => {
-		try {
-			return getFirstHalfDigits(number);
-		} catch (e) {
-			// Assume the number has an odd number of digits
-			// Construct the next largest power of 10
-			return getFirstHalfDigits(Number(
-				`1${Array.from(String(number)).fill('0').join('')}`
-			));
+	for (let numDigits = 0; numDigits < length; numDigits++) {
+		if (length % numDigits !== 0) {
+			// Skip substring lengths that couldn't repeat to make the whole number
+			continue;
 		}
-	})();
-	const doubledNum = doubleDigits(firstHalf);
 
-	if (doubledNum >= number) {
-		return doubledNum;
-	}
-	return doubleDigits(firstHalf + 1);
-}
+		const subStr = strNum.slice(0, numDigits);
+		const fitTimes = length / numDigits;
+		// Repeat the string the appropriate number of times to match the number's length
+		const compareStr = new Array(fitTimes).fill(subStr).join('');
 
-/**
- * For a given number, find the previous number that counts as an "invalid ID".
- *
- * If the specified number is itself invalid, return it.
- */
-function getPreviousInvalidId(number: number): number {
-	const firstHalf = (() => {
-		try {
-			return getFirstHalfDigits(number);
-		} catch (e) {
-			// Assume the number has an odd number of digits
-			// Construct the next smallest sequence of all 9s
-			return getFirstHalfDigits(Number(
-				Array.from(String(number)).slice(1).fill('9').join('')
-			));
+		if (compareStr === strNum) {
+			return true;
 		}
-	})();
-	const doubledNum = doubleDigits(firstHalf);
-
-	if (doubledNum <= number) {
-		return doubledNum;
 	}
-	return doubleDigits(firstHalf - 1);
+
+	return false;
 }
 
 /**

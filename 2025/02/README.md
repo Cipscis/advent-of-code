@@ -16,10 +16,16 @@ Actually converting that algorithm into code took a little more than expected th
 
 The method I've come with requires checking far fewer numbers, but given the Performance API reported that the solution was found in less than a millisecond perhaps I shouldn't have been so concerned with performance at the outset.
 
-For my input, the correct solution to part one was **22062284697**.
+For my input, the correct solution to part one was **22,062,284,697**.
 
 ## Part two
 
-TODO
+Sure enough, my premature optimisation meant my code for solving part one was no longer going to be useful for part two. Invalid IDs are no longer just sequences of digits repeated twice, but instead sequences repeated any number of times.
 
-For my input, the solution to part two was **TODO**.
+If I wanted to do the same sort of optimisation again, then I'd be doing prime factorisation to figure out how many different ways each number could be split. That sounds like a bad time, so instead this time I'll try actually checking every number manually. It probably won't be that slow anyway, given how fast the solution to part one took to run.
+
+Okay, yeah. That was much faster to write. Closer to 10 minutes than an hour for part one. It obviously ran quite a bit slower, but took less than a second overall according to the Performance API.
+
+If the input were orders of magnitude larger then perhaps performance enhancements of the sort I tried before might be worth it. But that optimisation was difficult to scale, and the input is _not_ orders of magnitude larger.
+
+For my input, the solution to part two was **46,666,175,279**.
