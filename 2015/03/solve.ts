@@ -3,75 +3,91 @@
  * @see {@link https://adventofcode.com/2015/day/3 Day 03 - Advent of Code 2015}
  */
 
-interface Solution {
-	numHousesVisited: number;
-}
+import { Direction } from './directions.ts';
+import {
+	navigate,
+	serialiseCoords,
+	type Coords,
+	type CoordsString,
+} from './navigation.ts';
 
-type Coords = readonly [x: number, y: number];
-type CoordsString = `${number},${number}`;
+interface Solution {
+	numHousesSantaVisited: number;
+	numHousesVisitedTotal: number;
+}
 
 /**
  * Solve this day's puzzle.
  */
-export function solve(input: string[]): Solution {
-	let numHousesVisited = 1;
+export function solve(input: Direction[]): Solution {
+	let positionASolo: Coords = [0, 0];
 
-	let position: Coords = [0, 0];
-	const grid = new Map<CoordsString, number>([
-		[serialiseCoords(position), 0],
+	let positionA: Coords = [0, 0];
+	let positionB: Coords = [0, 0];
+
+	// Doing two grids for the different parts for each count. I could do one, with both counts encoded in the key, but this is easier
+	const santaGrid = new Map<CoordsString, number>([
+		[serialiseCoords(positionASolo), 0],
+	]);
+	const sharedGrid = new Map<CoordsString, number>([
+		[serialiseCoords(positionA), 0],
 	]);
 
 	// Follow all instructions, keeping count of each position visited
+	let navigateB = false;
 	for (const instruction of input) {
-		position = navigate(position, instruction);
-		const serialisedPosition = serialiseCoords(position);
+		// "Santa" navigation on unshared grid to keep part one solution
+		positionASolo = processGridNavigation(
+			santaGrid,
+			positionASolo,
+			instruction,
+		);
 
-		const thisPositionCount = grid.get(serialisedPosition);
-		if (typeof thisPositionCount === 'undefined') {
-			grid.set(serialisedPosition, 1);
-			numHousesVisited += 1;
+		if (navigateB) {
+			// "RoboSanta" navigation
+			positionB = processGridNavigation(
+				sharedGrid,
+				positionB,
+				instruction,
+			);
 		} else {
-			grid.set(serialisedPosition, thisPositionCount+1);
+			// Also navigate "Santa" on the shared grid
+			positionA = processGridNavigation(
+				sharedGrid,
+				positionA,
+				instruction,
+			);
 		}
+		navigateB = !navigateB;
 	}
 
+	const numHousesSantaVisited = Array.from(santaGrid.entries()).length;
+	const numHousesVisitedTotal = Array.from(sharedGrid.entries()).length;
+
 	return {
-		numHousesVisited,
+		numHousesSantaVisited,
+		numHousesVisitedTotal,
 	};
 }
 
 /**
- * Convert a numeric pair of coordinates into a {@linkcode CoordsString} string that can be used as a {@linkcode Map} key.
- *
- * @see {@linkcode deserialiseCoords} for the reverse operation.
+ * Convert an initial {@linkcode Coords} to an updated one, based on a {@linkcode Direction}, and increment position visit counts in a specific grid.
  */
-function serialiseCoords([x, y]: Coords): CoordsString {
-	return `${x},${y}`;
-}
+function processGridNavigation(
+	grid: Map<CoordsString, number>,
+	position: Coords,
+	instruction: Direction,
+): Coords {
+	const newPosition = navigate(position, instruction);
+	const serialisedNewPosition = serialiseCoords(newPosition);
 
-/**
- * Convert a serialised {@linkcode CoordsString} string into its original numeric pair.
- *
- * **WARNING**: Does not contain error-checking code. Make sure it's passed a valid {@linkcode CoordsString} string or you will get garbage out.
- *
- * @see {@linkcode deserialiseCoords} for reverse operation.
- */
-function deserialiseCoords(coords: CoordsString): Coords {
-	const [x, y] = coords.split(',').map((value) => Number(value));
-	return [x, y];
-}
+	const thisPositionCount = grid.get(serialisedNewPosition);
 
-function navigate([x, y]: Coords, direction: string): Coords {
-	switch (direction) {
-		case '^':
-			return [x, y+1];
-		case '>':
-			return [x+1, y];
-		case 'v':
-			return [x, y-1];
-		case '<':
-			return [x-1, y];
-		default:
-			throw new Error(`Unrecognised direction '${direction}'`);
+	if (typeof thisPositionCount === 'undefined') {
+		grid.set(serialisedNewPosition, 1);
+	} else {
+		grid.set(serialisedNewPosition, thisPositionCount+1);
 	}
+
+	return newPosition;
 }
