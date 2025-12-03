@@ -8,9 +8,9 @@ interface Solution {
 }
 
 /**
- * Provide a solution to part one of the puzzle.
+ * Solve this day's puzzle.
  */
-export function solve(rawInput: string): Solution {
+export function solve(input: unknown): Solution {
 	// TODO
 	return {};
 }
