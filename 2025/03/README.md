@@ -14,6 +14,10 @@ For my input, the correct solution to part one was **17,244**.
 
 ## Part two
 
-TODO
+Like yesterday, part two extends the problem to make it more generic. We're no longer just constructing a "Joltage" from two digit, but from twelve (I'll call this a "Large Joltage").
 
-For my input, the solution to part two was **TODO**.
+So the parts of the code that were previously hard-coded, such as constructing the joltage by multiplying one digit by 10 and the other by nothing, and excluding the final digit when first finding the largest, are now going to need to become loops. Then I should be able to refactor the part one solution to just find a two digit "Joltage" instead.
+
+This feels like a good opportunity to use recursion.
+
+For my input, the solution to part two was **171,435,596,092,638**.
