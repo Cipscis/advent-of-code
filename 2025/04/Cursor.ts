@@ -48,6 +48,7 @@ export class Cursor<T> {
 
 	get x() { return this.#x; }
 	get y() { return this.#y; }
+	get position(): GridPosition { return [this.#x, this.#y]; }
 
 	get value() { return this.#grid.valueAt([this.#x, this.#y]); }
 

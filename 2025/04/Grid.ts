@@ -59,6 +59,18 @@ export class Grid<T> {
 		return this.#rows[y][x];
 	}
 
+	setValueAt([x, y]: GridPosition, value: T): void {
+		if (x < 0 || x >= this.#width) {
+			throw new RangeError(`Cannot get value at out of bounds x position ${x} on grid with width ${this.width}`);
+		}
+
+		if (y < 0 || y >= this.#height) {
+			throw new RangeError(`Cannot get value at out of bounds y position ${y} on grid with height ${this.height}`);
+		}
+
+		this.#rows[y][x] = value;
+	}
+
 	/**
 	 * Create a cursor starting at position [0, 0] and walking across the grid like reading - moving left to right across a row and then starting at the left position of the next row - call a function for each cell.
 	 */
