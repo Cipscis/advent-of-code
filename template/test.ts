@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 
-import { benchmark } from '../util/benchmark.ts';
+import { benchmark } from '../../util/benchmark.ts';
 
 import { parseInput } from './parseInput.ts';
 import { solve } from './solve.ts';
