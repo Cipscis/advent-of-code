@@ -1,4 +1,4 @@
-import { Grid, type GridPosition } from './Grid.ts';
+import { Grid, type GridPosition } from '../../util/Grid.ts';
 import { CellValue } from './CellValue.ts';
 
 /**

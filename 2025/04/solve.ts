@@ -3,9 +3,9 @@
  * @see {@link https://adventofcode.com/2025/day/4 Day 04 - Advent of Code 2025}
  */
 
-import { Grid, type GridPosition } from './Grid.ts';
+import { Grid, type GridPosition } from '../../util/Grid.ts';
 import { CellValue } from './CellValue.ts';
-import type { Cursor } from './Cursor.ts';
+import type { Cursor } from '../../util/Cursor.ts';
 
 /**
  * Solve part one of this day's puzzle.
@@ -24,40 +24,35 @@ export function solvePartOne(input: Grid<CellValue>): number {
 
 export function solvePartTwo(input: Grid<CellValue>): number {
 	let stopFlag = false;
-	let removedCount = 0;
+	let totalRemovedCount = 0;
 
 	while (!stopFlag) {
-		let positionsToRemove: GridPosition[] = [];
+		let cellsRemoved = 0;
+		input.update((cursor) => {
+			const isRemovable = cellIsRemovable(cursor);
+			if (!isRemovable) { return cursor.value; }
 
-		// First, collect all positions to remove
-		input.walk((cursor) => {
-			if (cellIsRemovable(cursor)) {
-				positionsToRemove.push(cursor.position);
-			}
+			cellsRemoved += 1;
+			totalRemovedCount += 1;
+			return CellValue.EMPTY;
 		});
 
-		// Then, update the values at each of those positions
-		for (const position of positionsToRemove) {
-			input.setValueAt(position, CellValue.EMPTY);
-			removedCount += 1;
-		}
-
-		if (positionsToRemove.length === 0) {
+		if (cellsRemoved === 0) {
 			stopFlag = true;
 		}
 	}
 
-	return removedCount;
+	return totalRemovedCount;
 }
 
 function cellIsRemovable(cursor: Cursor<CellValue>): boolean {
-		// Ignore empty rows
-		if (cursor.value === CellValue.EMPTY) {
-			return false;
-		}
-
-		const neighbours = cursor.getNeighbours();
-		const neighbourCount = neighbours.filter((value) => value === CellValue.ROLL).length;
-
-		return neighbourCount < 4;
+	// Ignore empty rows
+	if (cursor.value === CellValue.EMPTY) {
+		return false;
 	}
+
+	const neighbours = cursor.getNeighbours();
+	const neighbourCount = neighbours.filter((value) => value === CellValue.ROLL).length;
+
+	return neighbourCount < 4;
+}
